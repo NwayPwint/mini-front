@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors (Bank Brand Theme) */
+  --color-brand-royal: #003366;
+  --color-brand-royal-dark: #002244;
+  --color-brand-royal-light: #829bb4;
+  --color-brand-transparent: #003366b9;
+  --color-brand-wealth: #9b590b;
+  --color-brand-wealth-light: #e6c462;
+  --color-brand-gold: #c5a059;
+  --color-brand-sky: #0073e6;
+  --color-brand-navy: #001a33;
+  --color-brand-deep-navy: #001a33;
+
+  --color-status-success: #08601d;
+  --color-status-warning: #a3811c;
+  --color-status-error: #cf505c;
+  --color-status-info: #3a6970;
+  --color-status-accent: #b28f1d;
+
+  --color-surface-ghost: #f8fafc;
+  --color-surface-soft: #f8fafc;
+  --color-surface-institutional: #f2f2f2;
+  --color-surface-sidebar: #f8fafc;
+  --color-surface-border: #eef2f6;
+  --color-surface-light: #cbd5e1;
+
+  --color-text-main: #1e293b;
+  --color-text-muted: #64748b;
+  --color-text-light: #64748b;
+
+  /* Fonts */
+  --font-sans:
+    Pyidaungsu, "Noto Sans Myanmar", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-heading: Inter, "Noto Sans Myanmar", Pyidaungsu, sans-serif;
+
+  /* Border Radius */
+  --radius-custom-sm: 4px;
+  --radius-custom-md: 8px;
+  --radius-custom-lg: 12px;
+
+  /* Box Shadows */
+  --shadow-custom-sm: 0 4px 6px -1px rgba(0, 26, 51, 0.1);
+  --shadow-custom-md:
+    0 10px 25px -5px rgba(0, 26, 51, 0.08), 0 8px 10px -6px rgba(0, 26, 51, 0.1);
+  --shadow-custom-lg:
+    0 20px 25px -5px rgba(0, 26, 51, 0.1),
+    0 10px 10px -5px rgba(0, 26, 51, 0.04);
+}
