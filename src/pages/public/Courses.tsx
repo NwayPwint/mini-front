@@ -1,0 +1,159 @@
+import { Link } from "react-router-dom";
+import { BookOpen, Clock, Users, Star, ChevronRight } from "lucide-react";
+import { SectionHeader, CtaSection } from "../../components/home";
+import DynamicIcon from "../../components/ui/DynamicIcon";
+import PageSkeleton from "../../components/ui/PageSkeleton";
+import ErrorState from "../../components/ui/ErrorState";
+import { useCoursesPage } from "../../hooks/useCoursesPage";
+
+const levelColors: Record<string, string> = {
+  Beginner: "bg-status-success/10 text-status-success",
+  Intermediate: "bg-brand-sky/10 text-brand-sky",
+  Advanced: "bg-brand-gold/10 text-brand-gold",
+};
+
+export default function Courses() {
+  const { data, loading, error, refetch } = useCoursesPage();
+
+  if (loading) return <PageSkeleton />;
+  if (error || !data) return <ErrorState message={error || "No content available."} onRetry={refetch} />;
+
+  const hero = data.hero;
+  const categories = data.categories || [];
+  const courses = data.courses || [];
+  const cta = data.cta;
+
+  return (
+    <>
+      {/* ── Hero ── */}
+      <section className="hero-bg">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-16 items-center">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold block mb-4">
+                {hero?.eyebrow || "Explore Learning"}
+              </span>
+              <h1 className="text-4xl md:text-5xl font-bold font-heading text-brand-navy leading-[1.15] mb-5">
+                {hero?.title || "Find the Right Course for You"}
+              </h1>
+              <p className="text-base text-text-muted leading-relaxed max-w-lg mb-8">
+                {hero?.subtitle}
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href={hero?.primaryButton?.link || "#catalog"}
+                  className="bg-brand-royal hover:bg-brand-royal-dark text-white px-6 py-2.5 rounded-custom-sm text-sm font-medium transition-colors inline-flex items-center gap-2"
+                >
+                  {hero?.primaryButton?.text || "Browse Catalog"}
+                  <ChevronRight size={16} />
+                </a>
+                <Link
+                  to={hero?.secondaryButton?.link || "/register"}
+                  className="border border-surface-border hover:bg-surface-ghost text-text-main px-6 py-2.5 rounded-custom-sm text-sm font-medium transition-colors"
+                >
+                  {hero?.secondaryButton?.text || "Create Account"}
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {categories.slice(0, 4).map((cat, i) => (
+                <div
+                  key={i}
+                  className="bg-white/80 border border-surface-border rounded-custom-md p-4 flex items-center gap-3 hover:shadow-custom-sm transition-all"
+                >
+                  <div className="w-9 h-9 rounded-custom-sm bg-brand-royal/5 text-brand-royal flex items-center justify-center flex-shrink-0">
+                    <DynamicIcon name={cat.icon} size={18} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-brand-navy block">{cat.label}</span>
+                    <span className="text-[10px] text-text-muted">{cat.count} courses</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Categories ── */}
+      <section className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-20">
+          <SectionHeader
+            eyebrow="Browse by Category"
+            title="Course Categories"
+            subtitle="Find courses organized by subject area and skill domain."
+          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.map((cat, i) => (
+              <div
+                key={i}
+                className="bg-surface-ghost border border-surface-border rounded-custom-md p-5 text-center hover:shadow-custom-sm hover:border-brand-royal/30 transition-all cursor-pointer group"
+              >
+                <div className="w-10 h-10 rounded-custom-md bg-brand-royal/5 text-brand-royal flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-royal/10 transition-colors">
+                  <DynamicIcon name={cat.icon} size={20} />
+                </div>
+                <span className="text-sm font-semibold text-brand-navy block mb-1">
+                  {cat.label}
+                </span>
+                <span className="text-xs text-text-muted">{cat.count} courses</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Course Catalog ── */}
+      <section id="catalog" className="bg-surface-ghost">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-20">
+          <SectionHeader
+            eyebrow="All Courses"
+            title="Course Catalog"
+            subtitle="Explore our full range of accredited courses designed for every skill level."
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-2">
+            {courses.map((course, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-custom-lg border border-surface-border overflow-hidden group hover:shadow-custom-md transition-all flex flex-col"
+              >
+                <div className="aspect-video bg-surface-institutional flex items-center justify-center">
+                  <BookOpen size={28} className="text-brand-royal-light" strokeWidth={1.5} />
+                </div>
+                <div className="p-5 flex flex-col flex-grow">
+                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-custom-sm inline-block mb-2 w-fit ${levelColors[course.level || ""] || ""}`}>
+                    {course.level}
+                  </span>
+                  <h3 className="text-sm font-semibold text-brand-navy leading-snug line-clamp-2 mb-3 flex-grow">
+                    {course.title}
+                  </h3>
+                  <div className="flex items-center gap-3 text-xs text-text-muted mb-3">
+                    <span className="inline-flex items-center gap-1">
+                      <Clock size={12} /> {course.duration}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <Users size={12} /> {course.students}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <Star size={12} /> {course.rating}
+                    </span>
+                  </div>
+                  <div className="pt-3 border-t border-surface-border">
+                    <Link
+                      to={`/courses/${i}`}
+                      className="text-xs font-medium text-brand-royal hover:text-brand-royal-dark transition-colors inline-flex items-center gap-1"
+                    >
+                      View Details <ChevronRight size={12} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <CtaSection cta={cta} />
+    </>
+  );
+}
