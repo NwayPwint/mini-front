@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { GraduationCap, Menu, X, ChevronRight, LogOut, User } from "lucide-react";
+import {
+  GraduationCap,
+  Menu,
+  X,
+  ChevronRight,
+  LogOut,
+  User,
+} from "lucide-react";
 import LoginModal from "../modals/LoginModal";
 import { useAuth } from "../../stores/useAuthStore";
 
@@ -82,10 +89,13 @@ export default function PublicNavbar() {
         <div className="hidden md:flex items-center gap-2">
           {isAuthenticated ? (
             <>
-              <span className="text-sm font-medium text-text-main flex items-center gap-1.5 px-3 py-1.5">
+              <Link
+                to="/profile"
+                className="cursor-pointer text-sm font-medium text-text-main flex items-center gap-1.5 px-3 py-1.5"
+              >
                 <User size={14} />
                 {user?.name || user?.email}
-              </span>
+              </Link>
               <button
                 onClick={logout}
                 className="text-sm font-medium text-text-main hover:text-status-error px-3 py-1.5 rounded-custom-sm hover:bg-surface-institutional transition-all cursor-pointer inline-flex items-center gap-1.5"
@@ -154,10 +164,14 @@ export default function PublicNavbar() {
           <div className="border-t border-surface-border px-4 py-3 space-y-2">
             {isAuthenticated ? (
               <>
-                <span className="text-sm font-medium text-text-main flex items-center gap-1.5 px-3 py-2">
+                <Link
+                  to="/profile"
+                  onClick={() => setOpen(false)}
+                  className="text-sm font-medium text-text-main flex items-center gap-1.5 px-3 py-2 hover:bg-surface-institutional rounded-custom-sm cursor-pointer"
+                >
                   <User size={14} />
                   {user?.name || user?.email}
-                </span>
+                </Link>
                 <button
                   onClick={() => {
                     setOpen(false);

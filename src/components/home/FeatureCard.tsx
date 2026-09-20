@@ -1,7 +1,12 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
+
+type CardIcon = ComponentType<{
+  size?: number | string;
+  strokeWidth?: number | string;
+}>;
 
 interface FeatureCardProps {
-  icon: LucideIcon;
+  icon: CardIcon;
   title: string;
   description: string;
   variant?: "light" | "dark";

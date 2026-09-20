@@ -16,3 +16,14 @@ api.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
+export function getApiErrorMessage(error: unknown, fallback: string): string {
+  if (error && typeof error === "object" && "response" in error) {
+    const data = (error as { response?: { data?: { message?: unknown } } })
+      .response?.data;
+    if (typeof data?.message === "string" && data.message) {
+      return data.message;
+    }
+  }
+  return fallback;
+}
+

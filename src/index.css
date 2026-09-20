@@ -47,6 +47,10 @@
   --color-border: #e2e8f0;
   --color-input: #e2e8f0;
   --color-ring: #003366;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1e293b;
+  --color-card: #ffffff;
+  --color-card-foreground: #1e293b;
 
   /* Fonts */
   --font-sans:

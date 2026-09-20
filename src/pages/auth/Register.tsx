@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import InputField from "../../components/ui/InputField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterFormValues } from "../../types/auth";
 import { useAuth } from "../../stores/useAuthStore";
@@ -18,16 +18,19 @@ export default function RegisterPage() {
     formState: { errors },
     watch,
     reset,
+    control,
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
   });
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, isLoading } = useAuth();
   const navigate = useNavigate();
 
   const isTermChecked = watch("terms");
 
   const onSubmit = async (data: RegisterFormValues) => {
+    if (isLoading) return;
+
     const result = await registerUser(data);
 
     if (result) {
@@ -40,7 +43,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthLayout icon={UserPlus} title="Create Account" subtitle="Start your learning journey today">
+    <AuthLayout
+      icon={UserPlus}
+      title="Create Account"
+      subtitle="Start your learning journey today"
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <InputField
           label="Full Name"
@@ -76,8 +83,21 @@ export default function RegisterPage() {
 
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Checkbox id="terms" {...register("terms")} />
-            <Label htmlFor="terms" className="text-xs text-text-muted cursor-pointer">
+            <Controller
+              name="terms"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  id="terms"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+            <Label
+              htmlFor="terms"
+              className="text-xs text-text-muted cursor-pointer"
+            >
               I agree to the Terms of Service and Privacy Policy
             </Label>
           </div>
@@ -86,14 +106,22 @@ export default function RegisterPage() {
           )}
         </div>
 
-        <Button variant="default" type="submit" className="mt-1" disabled={!isTermChecked}>
-          Create Account
+        <Button
+          variant="default"
+          type="submit"
+          className="mt-1"
+          disabled={!isTermChecked || isLoading}
+        >
+          {isLoading ? "Creating account..." : "Create Account"}
         </Button>
       </form>
 
       <p className="text-center text-xs text-text-muted mt-4">
         Already have an account?{" "}
-        <Link to="/login" className="font-medium text-brand-royal hover:text-brand-royal-dark transition-colors">
+        <Link
+          to="/login"
+          className="font-medium text-brand-royal hover:text-brand-royal-dark transition-colors"
+        >
           Sign in
         </Link>
       </p>

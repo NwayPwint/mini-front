@@ -16,6 +16,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  setUser: (user: User) => void;
   register: (data: RegisterFormValues) => Promise<boolean>;
   login: (data: LoginFormValues) => Promise<boolean>;
   forgot: (email: string) => Promise<boolean>;
@@ -41,6 +42,7 @@ export const useAuth = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      setUser: (user: User) => set({ user }),
 
       register: async (data: RegisterFormValues) => {
         set({ isLoading: true, error: null });
@@ -113,11 +115,6 @@ export const useAuth = create<AuthState>()(
           set({ error: errorMessage, isLoading: false });
           return false;
         }
-      },
-
-      logout: () => {
-        localStorage.removeItem("token");
-        set({ user: null, token: null, isAuthenticated: false });
       },
     }),
     {

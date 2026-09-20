@@ -9,10 +9,21 @@ import Programs from "../pages/public/Programs";
 import Certificates from "../pages/public/Certificates";
 import DigitalLibrary from "../pages/public/DigitalLibrary";
 import PublicLayout from "../components/layout/PublicLayout";
+import AdminLayout from "@/components/layout/AdminLayout";
+import AdminDashboard from "@/pages/admin/Dashboard";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
+import Profile from "@/pages/auth/Profile";
+import MyLearning from "@/pages/student/Learning";
+import StudentDashboard from "@/pages/student/Dashboard";
+import StudentCertificates from "@/pages/student/Certificates";
+import StudentSaved from "@/pages/student/Saved";
+import StudentSettings from "@/pages/student/Settings";
+import StudentLayout from "@/components/layout/StudentLayout";
+import CourseDetail from "@/pages/public/CourseDetail";
+import CourseClassroom from "@/pages/student/Classroom";
 
 export default function AppRoutes() {
   return (
@@ -30,6 +41,24 @@ export default function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/courses/:slug" element={<CourseDetail />} />
+      </Route>
+      <Route element={<AdminLayout />}>
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      </Route>
+      <Route
+        path="/student/courses/:slug/learn"
+        element={<CourseClassroom />}
+      />
+      <Route element={<StudentLayout />}>
+        <Route path="/student/dashboard" element={<StudentDashboard />} />
+        <Route path="/student/learning" element={<MyLearning />} />
+        <Route path="/student/certificates" element={<StudentCertificates />} />
+        <Route path="/student/saved" element={<StudentSaved />} />
+        <Route path="/student/settings" element={<StudentSettings />} />
       </Route>
 
       {/* 404 NotFound Page */}

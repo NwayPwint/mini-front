@@ -1,4 +1,4 @@
-import {sanityClient} from '../config/sanity'
+import { sanityClient } from "../config/sanity";
 import type {
   HomePageData,
   StudentsPageData,
@@ -8,7 +8,7 @@ import type {
   ProgramsPageData,
   CertificatesPageData,
   DigitalLibraryPageData,
-} from '../types/sanity'
+} from "../types/sanity";
 
 export async function getHomePage(): Promise<HomePageData> {
   return sanityClient.fetch(`
@@ -23,7 +23,7 @@ export async function getHomePage(): Promise<HomePageData> {
       whyChooseUs,
       cta
     }
-  `)
+  `);
 }
 
 export async function getStudentsPage(): Promise<StudentsPageData> {
@@ -36,7 +36,7 @@ export async function getStudentsPage(): Promise<StudentsPageData> {
       faqs,
       cta
     }
-  `)
+  `);
 }
 
 export async function getBusinessPage(): Promise<BusinessPageData> {
@@ -49,7 +49,7 @@ export async function getBusinessPage(): Promise<BusinessPageData> {
       partners,
       cta
     }
-  `)
+  `);
 }
 
 export async function getCollegesPage(): Promise<CollegesPageData> {
@@ -62,7 +62,7 @@ export async function getCollegesPage(): Promise<CollegesPageData> {
       partners,
       cta
     }
-  `)
+  `);
 }
 
 export async function getCoursesPage(): Promise<CoursesPageData> {
@@ -70,10 +70,20 @@ export async function getCoursesPage(): Promise<CoursesPageData> {
     *[_type == "coursesPage"][0]{
       hero,
       categories,
-      courses,
+      "courses": courses[]{
+        _id,
+        title,
+        "slug": coalesce(slug.current, slug, ""),
+        level,
+        category,
+        instructorName,
+        "durationMinutes": coalesce(durationMinutes, duration, 0),
+        "studentCount": coalesce(studentCount, students, 0),
+        "rating": coalesce(rating, 5.0)
+      },
       cta
     }
-  `)
+  `);
 }
 
 export async function getProgramsPage(): Promise<ProgramsPageData> {
@@ -84,7 +94,7 @@ export async function getProgramsPage(): Promise<ProgramsPageData> {
       programHighlights,
       cta
     }
-  `)
+  `);
 }
 
 export async function getCertificatesPage(): Promise<CertificatesPageData> {
@@ -96,7 +106,7 @@ export async function getCertificatesPage(): Promise<CertificatesPageData> {
       sampleCertificates,
       cta
     }
-  `)
+  `);
 }
 
 export async function getDigitalLibraryPage(): Promise<DigitalLibraryPageData> {
@@ -107,5 +117,5 @@ export async function getDigitalLibraryPage(): Promise<DigitalLibraryPageData> {
       featuredResources,
       cta
     }
-  `)
+  `);
 }

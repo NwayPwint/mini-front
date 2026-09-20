@@ -35,6 +35,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   }, [isOpen, reset]);
 
   const onSubmit = async (data: LoginFormValues) => {
+    if (isLoading) return;
+
     const result = await loginUser(data);
     if (result) {
       ShowCustomToast.success("Login successful!");
@@ -107,8 +109,9 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             variant="default"
             type="submit"
             className="mt-1 sm:mt-2"
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 

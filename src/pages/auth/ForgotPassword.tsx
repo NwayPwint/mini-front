@@ -16,7 +16,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPassword() {
-  const { forgot, isLoading, error } = useAuth();
+  const { forgot, error } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {

@@ -13,7 +13,7 @@ import { KeyRound, ArrowLeft, CheckCircle2, AlertTriangle } from "lucide-react";
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
-  const { resetPassword, isLoading, error } = useAuth();
+  const { resetPassword, error } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {

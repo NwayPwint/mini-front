@@ -1,5 +1,10 @@
 import { api } from "./api";
-import type { LoginFormValues, RegisterFormValues } from "../types/auth";
+import type {
+  ChangePasswordFormValues,
+  LoginFormValues,
+  RegisterFormValues,
+  UpdateProfileFormValues,
+} from "../types/auth";
 
 export const authApi = {
   register: async (data: RegisterFormValues) => {
@@ -30,6 +35,21 @@ export const authApi = {
   resetPassword: async (token: string, password: string) => {
     const payload = { token, password };
     const response = await api.post("/auth/reset-password", payload);
+    return response.data;
+  },
+
+  getMe: async () => {
+    const response = await api.get("/auth/me");
+    return response.data;
+  },
+
+  updateProfile: async (data: UpdateProfileFormValues) => {
+    const response = await api.put("/auth/profile", data);
+    return response.data;
+  },
+
+  updatePassword: async (data: ChangePasswordFormValues) => {
+    const response = await api.put("/auth/change-password", data);
     return response.data;
   },
 };

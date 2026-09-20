@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginFormValues } from "../../types/auth";
 import { ShowCustomToast } from "../../utils/toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import AuthLayout from "../../components/layout/AuthLayout";
 
@@ -22,23 +22,32 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { login: loginUser } = useAuth();
+  const { login: loginUser, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = (location.state as { from?: string })?.from || "/";
 
   const onSubmit = async (data: LoginFormValues) => {
+    if (isLoading) return;
+
     const result = await loginUser(data);
 
     if (result) {
       ShowCustomToast.success("Login successful!");
       reset();
-      navigate("/");
+      navigate(from, { replace: true });
     } else {
       ShowCustomToast.error("Invalid email or password.");
     }
   };
 
   return (
-    <AuthLayout icon={LogIn} title="Welcome Back" subtitle="Sign in to access your learning dashboard">
+    <AuthLayout
+      icon={LogIn}
+      title="Welcome Back"
+      subtitle="Sign in to access your learning dashboard"
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
         <InputField
           label="Email"
@@ -59,7 +68,10 @@ export default function Login() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Checkbox id="remember" />
-            <Label htmlFor="remember" className="text-xs text-text-muted cursor-pointer">
+            <Label
+              htmlFor="remember"
+              className="text-xs text-text-muted cursor-pointer"
+            >
               Remember me
             </Label>
           </div>
@@ -71,14 +83,22 @@ export default function Login() {
           </Link>
         </div>
 
-        <Button variant="default" type="submit" className="mt-1">
-          Sign In
+        <Button
+          variant="default"
+          type="submit"
+          className="mt-1"
+          disabled={isLoading}
+        >
+          {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
       <p className="text-center text-xs text-text-muted mt-4">
         Don&apos;t have an account?{" "}
-        <Link to="/register" className="font-medium text-brand-royal hover:text-brand-royal-dark transition-colors">
+        <Link
+          to="/register"
+          className="font-medium text-brand-royal hover:text-brand-royal-dark transition-colors"
+        >
           Create one
         </Link>
       </p>

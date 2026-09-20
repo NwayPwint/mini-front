@@ -1,26 +1,29 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Clock, Users, Star, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { SectionHeader, CtaSection } from "../../components/home";
 import DynamicIcon from "../../components/ui/DynamicIcon";
 import PageSkeleton from "../../components/ui/PageSkeleton";
 import ErrorState from "../../components/ui/ErrorState";
-import { useCoursesPage } from "../../hooks/useCoursesPage";
-
-const levelColors: Record<string, string> = {
-  Beginner: "bg-status-success/10 text-status-success",
-  Intermediate: "bg-brand-sky/10 text-brand-sky",
-  Advanced: "bg-brand-gold/10 text-brand-gold",
-};
+import CourseCard from "@/components/course/CourseCard";
+import { type Course } from "@/types/course";
+import { useGetCoursesWithEnrollment } from "@/hooks/apis/useCourseQuery";
 
 export default function Courses() {
-  const { data, loading, error, refetch } = useCoursesPage();
+  const { data, isLoading, isError, error, refetch } =
+    useGetCoursesWithEnrollment();
 
-  if (loading) return <PageSkeleton />;
-  if (error || !data) return <ErrorState message={error || "No content available."} onRetry={refetch} />;
+  if (isLoading) return <PageSkeleton />;
+  if (isError || !data)
+    return (
+      <ErrorState
+        message={(error as Error)?.message || "No content available."}
+        onRetry={refetch}
+      />
+    );
 
   const hero = data.hero;
   const categories = data.categories || [];
-  const courses = data.courses || [];
+  const courses = (data.courses || []) as Course[];
   const cta = data.cta;
 
   return (
@@ -56,17 +59,21 @@ export default function Courses() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {categories.slice(0, 4).map((cat, i) => (
+              {categories.slice(0, 4).map((cat: any, i: number) => (
                 <div
-                  key={i}
+                  key={cat.id || i}
                   className="bg-white/80 border border-surface-border rounded-custom-md p-4 flex items-center gap-3 hover:shadow-custom-sm transition-all"
                 >
                   <div className="w-9 h-9 rounded-custom-sm bg-brand-royal/5 text-brand-royal flex items-center justify-center flex-shrink-0">
                     <DynamicIcon name={cat.icon} size={18} />
                   </div>
                   <div>
-                    <span className="text-xs font-semibold text-brand-navy block">{cat.label}</span>
-                    <span className="text-[10px] text-text-muted">{cat.count} courses</span>
+                    <span className="text-xs font-semibold text-brand-navy block">
+                      {cat.label}
+                    </span>
+                    <span className="text-[10px] text-text-muted">
+                      {cat.count} courses
+                    </span>
                   </div>
                 </div>
               ))}
@@ -84,9 +91,9 @@ export default function Courses() {
             subtitle="Find courses organized by subject area and skill domain."
           />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((cat, i) => (
+            {categories.map((cat: any, i: number) => (
               <div
-                key={i}
+                key={cat.id || i}
                 className="bg-surface-ghost border border-surface-border rounded-custom-md p-5 text-center hover:shadow-custom-sm hover:border-brand-royal/30 transition-all cursor-pointer group"
               >
                 <div className="w-10 h-10 rounded-custom-md bg-brand-royal/5 text-brand-royal flex items-center justify-center mx-auto mb-3 group-hover:bg-brand-royal/10 transition-colors">
@@ -95,7 +102,9 @@ export default function Courses() {
                 <span className="text-sm font-semibold text-brand-navy block mb-1">
                   {cat.label}
                 </span>
-                <span className="text-xs text-text-muted">{cat.count} courses</span>
+                <span className="text-xs text-text-muted">
+                  {cat.count} courses
+                </span>
               </div>
             ))}
           </div>
@@ -111,43 +120,14 @@ export default function Courses() {
             subtitle="Explore our full range of accredited courses designed for every skill level."
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-2">
-            {courses.map((course, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-custom-lg border border-surface-border overflow-hidden group hover:shadow-custom-md transition-all flex flex-col"
-              >
-                <div className="aspect-video bg-surface-institutional flex items-center justify-center">
-                  <BookOpen size={28} className="text-brand-royal-light" strokeWidth={1.5} />
-                </div>
-                <div className="p-5 flex flex-col flex-grow">
-                  <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-custom-sm inline-block mb-2 w-fit ${levelColors[course.level || ""] || ""}`}>
-                    {course.level}
-                  </span>
-                  <h3 className="text-sm font-semibold text-brand-navy leading-snug line-clamp-2 mb-3 flex-grow">
-                    {course.title}
-                  </h3>
-                  <div className="flex items-center gap-3 text-xs text-text-muted mb-3">
-                    <span className="inline-flex items-center gap-1">
-                      <Clock size={12} /> {course.duration}
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <Users size={12} /> {course.students}
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <Star size={12} /> {course.rating}
-                    </span>
-                  </div>
-                  <div className="pt-3 border-t border-surface-border">
-                    <Link
-                      to={`/courses/${i}`}
-                      className="text-xs font-medium text-brand-royal hover:text-brand-royal-dark transition-colors inline-flex items-center gap-1"
-                    >
-                      View Details <ChevronRight size={12} />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {courses.map((course, index) => {
+              return (
+                <CourseCard
+                  key={course.id || course.slug || index}
+                  course={course}
+                />
+              );
+            })}
           </div>
         </div>
       </section>
