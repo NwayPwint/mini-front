@@ -26,8 +26,6 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = (location.state as { from?: string })?.from || "/";
-
   const onSubmit = async (data: LoginFormValues) => {
     if (isLoading) return;
 
@@ -36,7 +34,18 @@ export default function Login() {
     if (result) {
       ShowCustomToast.success("Login successful!");
       reset();
-      navigate(from, { replace: true });
+      const from = (location.state as { from?: string })?.from;
+      if (from && from !== "/login") {
+        navigate(from, { replace: true });
+        return;
+      }
+      const state = useAuth.getState();
+      const role = state.user?.role;
+      if (role === "ADMIN") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/student/dashboard", { replace: true });
+      }
     } else {
       ShowCustomToast.error("Invalid email or password.");
     }

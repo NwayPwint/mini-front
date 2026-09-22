@@ -6,6 +6,7 @@ import PageSkeleton from "../../components/ui/PageSkeleton";
 import ErrorState from "../../components/ui/ErrorState";
 import CourseCard from "@/components/course/CourseCard";
 import { type Course } from "@/types/course";
+import type { CourseCategoryItem } from "@/types/sanity";
 import { useGetCoursesWithEnrollment } from "@/hooks/apis/useCourseQuery";
 
 export default function Courses() {
@@ -59,7 +60,9 @@ export default function Courses() {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {categories.slice(0, 4).map((cat: any, i: number) => (
+              {categories
+                .slice(0, 4)
+                .map((cat: CourseCategoryItem, i: number) => (
                 <div
                   key={cat.id || i}
                   className="bg-white/80 border border-surface-border rounded-custom-md p-4 flex items-center gap-3 hover:shadow-custom-sm transition-all"
@@ -91,7 +94,7 @@ export default function Courses() {
             subtitle="Find courses organized by subject area and skill domain."
           />
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.map((cat: any, i: number) => (
+            {categories.map((cat: CourseCategoryItem, i: number) => (
               <div
                 key={cat.id || i}
                 className="bg-surface-ghost border border-surface-border rounded-custom-md p-5 text-center hover:shadow-custom-sm hover:border-brand-royal/30 transition-all cursor-pointer group"

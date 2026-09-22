@@ -4,15 +4,18 @@ export interface Lesson {
   durationMinutes: number;
   isFreePreview: boolean;
   order: number;
+  videoUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CourseModule {
   id: string;
   title: string;
   order: number;
-  courseId: string;
-  createdAt: string;
-  updatedAt: string;
+  courseId?: string;
+  createdAt?: string;
+  updatedAt?: string;
   lessons: Lesson[];
 }
 

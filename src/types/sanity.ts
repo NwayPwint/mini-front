@@ -88,6 +88,7 @@ export interface AboutAccreditations {
 }
 
 export interface CourseCategoryItem {
+  id?: string;
   icon?: string;
   label?: string;
   count?: number;
@@ -102,6 +103,7 @@ export interface CourseListItem {
   level?: string;
   duration?: string;
   durationMinutes?: number;
+  lessonsCount?: number;
   students?: number;
   studentCount?: number;
   rating?: number;

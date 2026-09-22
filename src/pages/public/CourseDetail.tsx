@@ -1,4 +1,4 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import {
   Loader2,
   Clock,
@@ -10,11 +10,16 @@ import {
   PlayCircle,
   ChevronRight,
   ArrowLeft,
+  Bookmark,
 } from "lucide-react";
 import {
   useEnrollCourse,
   useGetCourseBySlug,
 } from "@/hooks/apis/useCourseQuery";
+import {
+  useSaveCourse,
+  useUnsaveCourse,
+} from "@/hooks/apis/useStudentQuery";
 import ErrorState from "@/components/ui/ErrorState";
 import { useAuth } from "@/stores/useAuthStore";
 import { ShowCustomToast } from "@/utils/toast";
@@ -23,7 +28,10 @@ export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { isAuthenticated } = useAuth();
   const enrollMutation = useEnrollCourse();
+  const saveMutation = useSaveCourse();
+  const unsaveMutation = useUnsaveCourse();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     data: courseData,
@@ -54,6 +62,7 @@ export default function CourseDetail() {
 
   const course = courseData;
   const isEnrolled = course.isEnrolled ?? false;
+  const isSaved = course.isSaved ?? false;
   const studentCount = course._count?.enrollments ?? 0;
 
   const handleEnrollAction = () => {
@@ -70,6 +79,32 @@ export default function CourseDetail() {
     } else {
       navigate("/login", { state: { from: location.pathname } });
       return;
+    }
+  };
+
+  const handleSaveToggle = () => {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: location.pathname } });
+      return;
+    }
+    if (!course.id) {
+      ShowCustomToast.error("Course not found!");
+      return;
+    }
+    if (isSaved) {
+      unsaveMutation.mutate(course.id, {
+        onSuccess: () => {
+          refetch();
+          ShowCustomToast.success("Course removed from saved list");
+        },
+      });
+    } else {
+      saveMutation.mutate(course.id, {
+        onSuccess: () => {
+          refetch();
+          ShowCustomToast.success("Course saved!");
+        },
+      });
     }
   };
 
@@ -280,6 +315,19 @@ export default function CourseDetail() {
                       <ChevronRight size={16} />
                     </>
                   )}
+                </button>
+
+                <button
+                  onClick={handleSaveToggle}
+                  disabled={saveMutation.isPending || unsaveMutation.isPending}
+                  className={`w-full py-2.5 px-4 rounded-custom-sm font-semibold text-sm transition-colors border flex items-center justify-center gap-2 ${
+                    isSaved
+                      ? "bg-brand-gold/10 text-brand-wealth border-brand-gold/40"
+                      : "bg-white text-brand-navy border-surface-border hover:bg-surface-ghost"
+                  }`}
+                >
+                  <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} />
+                  {isSaved ? "Saved" : "Save for Later"}
                 </button>
 
                 <p className="text-[11px] text-center text-text-muted">

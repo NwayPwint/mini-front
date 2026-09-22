@@ -61,7 +61,7 @@ export interface DashboardResponse {
 export interface StudentCourse {
   id: string;
   progress: number;
-  status: number;
+  status: "ACTIVE" | "COMPLETED" | "CANCELLED";
   enrolledAt: string;
   completedAt: string;
   course: Course;
@@ -79,4 +79,53 @@ export interface SavedCourse {
   id: string;
   createdAt: string;
   course: Course;
+}
+
+export interface ClassroomLesson {
+  id: string;
+  title: string;
+  durationMinutes: number;
+  videoUrl: string;
+  isFreePreview: boolean;
+  order: number;
+  isCompleted: boolean;
+  watchedSec: number;
+}
+
+export interface ClassroomModule {
+  id: string;
+  title: string;
+  order: number;
+  lessons: ClassroomLesson[];
+}
+
+export interface ClassroomCourse {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  instructorName: string;
+  modules: ClassroomModule[];
+}
+
+export interface Enrollment {
+  id: string;
+  progress: number;
+  status: string;
+}
+export interface ClassRoomResponse {
+  success: boolean;
+  message: string;
+  data: {
+    course: ClassroomCourse;
+    enrollment: Enrollment;
+  };
+}
+
+export interface LessonProgressResponse {
+  lessonId: string;
+  watchedSec: number;
+  isCompleted: boolean;
+  courseProgress: number;
+  enrollmentStatus: string;
 }

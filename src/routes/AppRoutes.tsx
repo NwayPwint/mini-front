@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import NotFound from "../pages/common/NotFound";
+import ProtectedRoute from "../pages/common/ProtectedRoute";
 import Index from "../pages/public/Index";
 import Students from "../pages/public/Students";
 import Business from "../pages/public/Business";
@@ -24,6 +25,10 @@ import StudentSettings from "@/pages/student/Settings";
 import StudentLayout from "@/components/layout/StudentLayout";
 import CourseDetail from "@/pages/public/CourseDetail";
 import CourseClassroom from "@/pages/student/Classroom";
+import AdminUsers from "@/pages/admin/Users";
+import AdminCourses from "@/pages/admin/Courses";
+import CourseForm from "@/pages/admin/CourseForm";
+import CourseEditor from "@/pages/admin/CourseEditor";
 
 export default function AppRoutes() {
   return (
@@ -41,24 +46,37 @@ export default function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/courses/:slug" element={<CourseDetail />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/profile" element={<Profile />} />
+        </Route>
       </Route>
-      <Route element={<AdminLayout />}>
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+        <Route element={<AdminLayout />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/courses" element={<AdminCourses />} />
+          <Route path="/admin/courses/new" element={<CourseForm />} />
+          <Route path="/admin/courses/:slug" element={<CourseEditor />} />
+        </Route>
       </Route>
       <Route
-        path="/student/courses/:slug/learn"
-        element={<CourseClassroom />}
-      />
-      <Route element={<StudentLayout />}>
-        <Route path="/student/dashboard" element={<StudentDashboard />} />
-        <Route path="/student/learning" element={<MyLearning />} />
-        <Route path="/student/certificates" element={<StudentCertificates />} />
-        <Route path="/student/saved" element={<StudentSaved />} />
-        <Route path="/student/settings" element={<StudentSettings />} />
+        element={
+          <ProtectedRoute allowedRoles={["STUDENT", "COLLEGE", "BUSINESS"]} />
+        }
+      >
+        <Route
+          path="/student/courses/:slug/learn"
+          element={<CourseClassroom />}
+        />
+        <Route element={<StudentLayout />}>
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/learning" element={<MyLearning />} />
+          <Route path="/student/certificates" element={<StudentCertificates />} />
+          <Route path="/student/saved" element={<StudentSaved />} />
+          <Route path="/student/settings" element={<StudentSettings />} />
+        </Route>
       </Route>
 
       {/* 404 NotFound Page */}

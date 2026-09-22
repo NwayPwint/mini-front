@@ -1,44 +1,26 @@
 import { notificationApi } from "@/services/notificationApi";
-import { useAuth } from "@/stores/useAuthStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getApiErrorMessage } from "@/services/api";
 import { ShowCustomToast } from "@/utils/toast";
 import type { NotificationPreference } from "@/types/notification";
-
-function useNotificationQuery<TData>(
-  queryKey: (string | number)[],
-  queryFn: () => Promise<{ data: TData }>,
-) {
-  const { token, isAuthenticated } = useAuth();
-
-  return useQuery({
-    queryKey,
-    queryFn: async () => {
-      const response = await queryFn();
-      return response.data;
-    },
-    enabled: isAuthenticated && !!token,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
-  });
-}
+import { useApiQuery } from "@/hooks/apis/useApiQuery";
 
 export function useGetPreferences() {
-  return useNotificationQuery(
+  return useApiQuery(
     ["notificationPreferences"],
     notificationApi.getPreferences,
   );
 }
 
 export function useGetUnreadCount() {
-  return useNotificationQuery(
+  return useApiQuery(
     ["unreadNotificationCount"],
     notificationApi.getUnreadCount,
   );
 }
 
 export function useGetNotifications(page = 1, limit = 10) {
-  return useNotificationQuery(
+  return useApiQuery(
     ["notifications", page, limit],
     () => notificationApi.getNotifications(page, limit),
   );

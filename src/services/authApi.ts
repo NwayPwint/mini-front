@@ -1,4 +1,6 @@
 import { api } from "./api";
+import type { ApiResponse } from "@/types/api";
+import type { User } from "@/stores/useAuthStore";
 import type {
   ChangePasswordFormValues,
   LoginFormValues,
@@ -13,7 +15,10 @@ export const authApi = {
       email: data.email,
       password: data.password,
     };
-    const response = await api.post("/auth/register", payload);
+    const response = await api.post<ApiResponse<null>>(
+      "/auth/register",
+      payload,
+    );
     return response.data;
   },
 
@@ -22,34 +27,45 @@ export const authApi = {
       email: data.email,
       password: data.password,
     };
-    const response = await api.post("/auth/login", payload);
+    const response = await api.post<
+      ApiResponse<{ user: User; token: string }>
+    >("/auth/login", payload);
     return response.data;
   },
 
   forgot: async (email: string) => {
     const payload = { email };
-    const response = await api.post("/auth/forgot-password", payload);
+    const response = await api.post<ApiResponse<null>>(
+      "/auth/forgot-password",
+      payload,
+    );
     return response.data;
   },
 
   resetPassword: async (token: string, password: string) => {
     const payload = { token, password };
-    const response = await api.post("/auth/reset-password", payload);
+    const response = await api.post<ApiResponse<null>>(
+      "/auth/reset-password",
+      payload,
+    );
     return response.data;
   },
 
   getMe: async () => {
-    const response = await api.get("/auth/me");
+    const response = await api.get<ApiResponse<User>>("/auth/me");
     return response.data;
   },
 
   updateProfile: async (data: UpdateProfileFormValues) => {
-    const response = await api.put("/auth/profile", data);
+    const response = await api.put<ApiResponse<User>>("/auth/profile", data);
     return response.data;
   },
 
   updatePassword: async (data: ChangePasswordFormValues) => {
-    const response = await api.put("/auth/change-password", data);
+    const response = await api.put<ApiResponse<null>>(
+      "/auth/change-password",
+      data,
+    );
     return response.data;
   },
 };

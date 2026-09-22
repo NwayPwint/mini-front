@@ -6,31 +6,14 @@ import { ShowCustomToast } from "@/utils/toast";
 import { getCoursesPage } from "@/services/sanityService";
 import { studentApi } from "@/services/studentApi";
 import type { StudentCourse } from "@/types/student";
-
-function useCourseQuery<TData>(
-  queryKey: unknown[],
-  queryFn: () => Promise<{ data: TData }>,
-  options?: { isPublic?: boolean },
-) {
-  const { token, isAuthenticated } = useAuth();
-
-  return useQuery({
-    queryKey,
-    queryFn: async () => {
-      const response = await queryFn();
-      return response.data;
-    },
-    enabled: options?.isPublic ? true : isAuthenticated && !!token,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
-  });
-}
+import type { CourseListItem } from "@/types/sanity";
+import { useApiQuery } from "@/hooks/apis/useApiQuery";
 
 export function useGetCourseBySlug(slug: string) {
-  return useCourseQuery(
+  return useApiQuery(
     ["course", slug],
     () => courseApi.getCourseBySlug(slug),
-    { isPublic: true },
+    { auth: false },
   );
 }
 
@@ -43,10 +26,13 @@ export function useGetCoursesWithEnrollment() {
       const sanityData = await getCoursesPage();
       const sanityCourses = sanityData?.courses || [];
 
-      const mapSanityToCourse = (c: any, isEnrolled = false): Course => ({
-        id: c._id || c.slug?.current || c.slug || "",
+      const mapSanityToCourse = (
+        c: CourseListItem,
+        isEnrolled = false,
+      ): Course => ({
+        id: c._id || c.slug || "",
         title: c.title || "",
-        slug: typeof c.slug === "object" ? c.slug?.current : c.slug || "",
+        slug: c.slug || "",
         instructorName: c.instructorName || "",
         level: c.level || "Beginner",
         rating: c.rating || 5,
@@ -59,7 +45,9 @@ export function useGetCoursesWithEnrollment() {
       if (!isAuthenticated || !token) {
         return {
           ...sanityData,
-          courses: sanityCourses.map((c: any) => mapSanityToCourse(c, false)),
+          courses: sanityCourses.map((c: CourseListItem) =>
+            mapSanityToCourse(c, false),
+          ),
         };
       }
 
@@ -67,9 +55,8 @@ export function useGetCoursesWithEnrollment() {
         const res = await studentApi.getMyCourses();
         const enrolledCourses: StudentCourse[] = res.data || [];
 
-        const mergedCourses: Course[] = sanityCourses.map((c: any) => {
-          const courseSlug =
-            typeof c.slug === "object" ? c.slug?.current : c.slug;
+        const mergedCourses: Course[] = sanityCourses.map((c: CourseListItem) => {
+          const courseSlug = c.slug;
 
           const isEnrolled = enrolledCourses.some((e) => {
             const isMatchingCourse =
@@ -88,7 +75,9 @@ export function useGetCoursesWithEnrollment() {
         console.error("Failed to fetch student enrolled courses:", error);
         return {
           ...sanityData,
-          courses: sanityCourses.map((c: any) => mapSanityToCourse(c, false)),
+          courses: sanityCourses.map((c: CourseListItem) =>
+            mapSanityToCourse(c, false),
+          ),
         };
       }
     },
@@ -104,9 +93,10 @@ export function useEnrollCourse() {
       queryClient.invalidateQueries({ queryKey: ["courses-with-enrollment"] });
       ShowCustomToast.success("Successfully enrolled in the course!");
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       ShowCustomToast.error(
-        error.response?.data?.message || "Failed to enroll.",
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to enroll.",
       );
     },
   });

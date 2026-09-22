@@ -2,12 +2,19 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { authApi } from "../services/authApi";
 import type { RegisterFormValues, LoginFormValues } from "../types/auth";
+import type { UserRole } from "../types/role";
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role?: string;
+  role?: UserRole;
+  phone?: string | null;
+  address?: string | null;
+  bio?: string | null;
+  weeklyTargetHours?: number | null;
+  createdAt?: string;
+  passwordChangedAt?: string | null;
 }
 
 interface AuthState {

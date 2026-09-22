@@ -1,24 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "@/services/authApi";
 import { useAuth } from "@/stores/useAuthStore";
 import type {
   ChangePasswordFormValues,
   UpdateProfileFormValues,
 } from "@/types/auth";
+import { useApiQuery } from "@/hooks/apis/useApiQuery";
 
 export function useGetMe() {
-  const { token, isAuthenticated } = useAuth();
-  return useQuery({
-    queryKey: ["authUser"],
-    queryFn: async () => {
-      const response = await authApi.getMe();
-      return response.data;
-    },
-    enabled: isAuthenticated && !!token,
-    refetchOnWindowFocus: false,
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  });
+  return useApiQuery(["authUser"], authApi.getMe, { retry: false });
 }
 
 export function useUpdateProfile() {
